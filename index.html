@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Explore sample public welfare schemes and services.">
+<title>Yojana Setu | Public Services Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#10223d;--bg:#f3f6fa;--card:#fff;--edge:#d5dde8;--orange:#f28c28;--green:#1f7a4d;--muted:#5b6b80;--size:16px}
+*{box-sizing:border-box}
+html{font-size:var(--size);scroll-behavior:smooth;scroll-padding-top:100px}
+body{margin:0;font-family:"Public Sans",system-ui,sans-serif;background:var(--bg);color:var(--navy);line-height:1.6}
+body.hc{--navy:#000;--bg:#fff;--edge:#000;--muted:#222;--orange:#ffbf69;--green:#075c32}
+button,input,select{font:inherit}
+button,a{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+h1,h2,h3,.brand b{font-family:"Bricolage Grotesque",system-ui,sans-serif;letter-spacing:-.02em;line-height:1.15}
+h2{font-size:2rem;margin:0 0 1rem}
+a{color:inherit}
+:is(button,a,input,select,summary):focus-visible{outline:3px solid var(--orange);outline-offset:3px}
+[hidden]{display:none!important}
+.sr-only{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
+
+/* thin strip on top */
+.topbar{background:var(--navy);color:#fff;font-size:.8rem;display:flex;justify-content:space-between;align-items:center;padding:.5rem 5vw;flex-wrap:wrap;gap:.6rem}
+.tools{display:flex;align-items:center;gap:.4rem;flex-wrap:wrap}
+.tools :is(button,select),.skip{background:transparent;border:1px solid #ffffff70;color:#fff;border-radius:5px;padding:.25rem .6rem;cursor:pointer;text-decoration:none}
+.tools select{width:auto;font-size:.8rem}
+.tools select option{color:#000}
+.tools :is(button,select):hover,.skip:hover{background:#ffffff20}
+
+/* main menu */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 5vw;background:var(--card);border-bottom:4px solid var(--green);border-image:linear-gradient(90deg,var(--orange) 33%,#fff 33% 66%,var(--green) 66%) 1;position:sticky;top:0;z-index:5;gap:1rem}
+.brand{display:flex;flex-direction:column;text-decoration:none;position:relative;padding-left:2.8rem;min-width:180px}
+.brand b{font-size:1.4rem}
+.brand small{color:var(--muted);font-size:.75rem}
+.wheel{position:absolute;left:0;top:2px;width:2.2rem;height:2.2rem;border-radius:50%;border:3px solid #1b3a8a;background:repeating-conic-gradient(#1b3a8a 0 4deg,transparent 4deg 15deg)}
+nav{display:flex;align-items:center;gap:1.2rem}
+nav a{text-decoration:none;font-weight:600;font-size:.9rem}
+nav a:hover{color:var(--green)}
+.btn{display:inline-block;background:var(--navy);color:#fff;border:0;padding:.8rem 1.3rem;border-radius:8px;font-weight:700;text-align:center;cursor:pointer;text-decoration:none;transition:background .15s,transform .15s}
+.btn:hover{background:var(--green);transform:translateY(-1px)}
+.btn.small{padding:.55rem .9rem;font-size:.85rem}
+.eyebrow{color:var(--green);font-size:.78rem;font-weight:700;letter-spacing:.12em}
+
+/* sliding banner */
+.hero{position:relative;height:min(68vh,460px);overflow:hidden;background:var(--navy)}
+.slide{position:absolute;inset:0;display:flex;align-items:center;padding:0 9vw;color:#fff;opacity:0;transition:opacity .8s}
+.slide.on{opacity:1}
+.slide::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#10223dcc,transparent 75%)}
+.cap{position:relative;z-index:1;max-width:34rem}
+.cap h2{font-size:clamp(2rem,5vw,3.4rem);font-weight:800}
+.arrow{position:absolute;top:50%;translate:0 -50%;z-index:2;width:2.6rem;height:2.6rem;border:0;border-radius:50%;background:#ffffffcc;color:var(--navy);font-size:1.8rem;line-height:1;cursor:pointer}
+.arrow:hover{background:#fff}
+.prev{left:1.5vw}
+.next{right:1.5vw}
+.dots{position:absolute;bottom:1rem;left:0;right:0;z-index:2;display:flex;justify-content:center;gap:.5rem}
+.dots button{width:.8rem;height:.8rem;padding:0;border-radius:50%;border:2px solid #fff;background:transparent;cursor:pointer}
+.dots button.on{background:var(--orange);border-color:var(--orange)}
+
+/* number strip */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);background:var(--navy);color:#fff;text-align:center}
+.stats div{padding:1.5rem .8rem;border-right:1px solid #ffffff25}
+.stats b{display:block;font:800 2.5rem "Bricolage Grotesque",sans-serif;color:var(--orange)}
+.stats span{font-size:.9rem}
+
+/* services and finder */
+.services{display:grid;grid-template-columns:1.1fr .9fr;gap:3rem;padding:4rem 5vw;align-items:center;background:radial-gradient(circle at 85% 10%,#f28c2830,transparent 40%),radial-gradient(circle at 5% 90%,#1f7a4d26,transparent 40%),var(--bg)}
+.svc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+.svc{display:flex;align-items:center;gap:.9rem;background:var(--card);border:1.5px solid var(--edge);border-radius:14px;padding:1.2rem;text-decoration:none;transition:transform .2s,border-color .2s}
+.svc:hover{transform:translateY(-3px);border-color:var(--navy)}
+.svc i{font-style:normal;display:grid;place-items:center;flex:none;width:2.8rem;height:2.8rem;border-radius:12px;background:var(--orange);color:#fff;font-size:1.3rem;font-weight:700}
+.perks{list-style:none;display:flex;gap:.8rem 1rem;padding:0;flex-wrap:wrap;margin-top:1.5rem}
+.perks li{padding-left:1.2rem;position:relative;font-weight:600;font-size:.9rem}
+.perks li::before{content:"";position:absolute;left:0;top:.4em;width:.65rem;height:.35rem;border-left:3px solid var(--green);border-bottom:3px solid var(--green);rotate:-45deg}
+.finder{background:var(--card);border:2px solid var(--navy);border-radius:18px;padding:1.6rem;box-shadow:8px 8px 0 var(--orange);display:grid;gap:.85rem}
+.finder h2{margin:0;font-size:1.6rem}
+.form-note{color:var(--muted);font-size:.9rem}
+.finder label,.search-label{display:grid;gap:.4rem;font-weight:600;font-size:.92rem}
+.finder output{color:var(--green);font-weight:700}
+select,input[type=search],#refNo{width:100%;padding:.7rem;border:1.5px solid var(--edge);border-radius:8px;background:var(--card);color:var(--navy)}
+input[type=range]{width:100%;accent-color:var(--orange)}
+.gender-field{padding:0;margin:0;border:0;min-width:0}
+.gender-field legend{margin-bottom:.4rem;font-size:.92rem;font-weight:600}
+.pills{display:flex;border:1.5px solid var(--edge);border-radius:8px;overflow:hidden}
+.pills button{flex:1;border:0;background:var(--card);color:var(--navy);padding:.65rem;cursor:pointer}
+.pills button.on{background:var(--navy);color:#fff}
+.count{color:var(--green);font-weight:700;margin:0;min-height:1.4em}
+
+/* scheme cards */
+.catalog,.steps-sec,.help,.follow-up{padding:4rem 5vw}
+.head{display:flex;justify-content:space-between;align-items:end;gap:1rem;flex-wrap:wrap}
+.search-label{min-width:min(100%,300px)}
+.chips{display:flex;gap:.5rem;flex-wrap:wrap;margin:1.5rem 0}
+.chip{border:1.5px solid var(--navy);color:var(--navy);background:transparent;border-radius:99px;padding:.45rem 1rem;cursor:pointer}
+.chip.on,.chip:hover{background:var(--navy);color:#fff}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,260px),1fr));gap:1.3rem}
+.card{position:relative;background:var(--card);border:1.5px solid var(--edge);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;text-align:left;padding:0;color:var(--navy);cursor:pointer;transition:transform .2s,border-color .2s}
+.card:hover{transform:translateY(-3px);border-color:var(--navy)}
+.card.faded{opacity:.65}
+.cover{height:125px;position:relative;display:flex;align-items:flex-end;padding:.8rem 1rem;color:#fff;overflow:hidden}
+.cover::before{content:attr(data-icon);position:absolute;right:.3rem;top:-1.2rem;font:800 7rem "Bricolage Grotesque",sans-serif;opacity:.2}
+.cover span{position:relative;z-index:1;background:#00000055;padding:.2rem .65rem;border-radius:99px;font-size:.78rem}
+.cover .match{position:absolute;top:.7rem;right:.7rem;background:#fff;color:#124b2d;font-weight:700;font-size:.72rem;padding:.25rem .55rem}
+.card-body{padding:1.1rem}
+.card h3{margin:0 0 .5rem;font-size:1.2rem}
+.card p{margin:0;color:var(--muted);font-size:.92rem}
+.card .perk{margin-top:.9rem;font-weight:700;color:var(--green)}
+.agri{background:linear-gradient(135deg,#216b43,#84a832)}
+.health{background:linear-gradient(135deg,#a3154e,#e97965)}
+.edu{background:linear-gradient(135deg,#283d94,#2798c2)}
+.biz{background:linear-gradient(135deg,#a7420a,#d6a321)}
+.home{background:linear-gradient(135deg,#005b52,#359a86)}
+.save{background:linear-gradient(135deg,#572080,#9563ad)}
+.empty{padding:1.5rem;border:1px dashed var(--edge);border-radius:10px;text-align:center}
+
+/* four steps */
+.steps-sec{background:var(--card)}
+.steps-sec ol{list-style:none;padding:0;display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;counter-reset:s}
+.steps-sec li{counter-increment:s;border-top:4px solid var(--orange);padding-top:1rem;display:grid;gap:.5rem}
+.steps-sec li::before{content:"Step " counter(s);color:var(--muted);font-size:.85rem}
+.steps-sec li b{font:800 1.4rem "Bricolage Grotesque",sans-serif}
+
+/* demo tracker */
+.follow-up{display:grid;grid-template-columns:1fr 1.3fr;gap:3rem;background:#e8eef6}
+body.hc .follow-up{background:#fff;border-block:2px solid var(--navy)}
+.row{display:flex;gap:.6rem;align-items:stretch}
+.row input{flex:1;min-width:0}
+.stages{list-style:none;padding:0;display:grid;grid-template-columns:repeat(4,1fr);margin:1.5rem 0 0;text-align:center;font-size:.8rem}
+.stages li{position:relative;padding-top:2rem;color:var(--muted)}
+.stages li::before{content:"";position:absolute;top:0;left:50%;width:1.1rem;height:1.1rem;margin-left:-.55rem;border-radius:50%;background:var(--card);border:3px solid var(--edge);z-index:1}
+.stages li::after{content:"";position:absolute;top:.5rem;left:-50%;width:100%;height:3px;background:var(--edge)}
+.stages li:first-child::after{display:none}
+.stages li.done{color:var(--navy);font-weight:700}
+.stages li.done::before,.stages li.done::after{background:var(--green);border-color:var(--green)}
+code{background:#fff;padding:.15rem .4rem;border-radius:4px}
+
+/* help and footer */
+.help details{background:var(--card);border:1.5px solid var(--edge);border-radius:10px;padding:1rem 1.2rem;margin-bottom:.8rem;max-width:48rem}
+summary{cursor:pointer;font-weight:700}
+.help details p{color:var(--muted)}
+footer{background:var(--navy);color:#e0e7f1;padding:2rem 5vw;font-size:.9rem}
+
+/* popup box */
+dialog{position:fixed;border:2px solid var(--navy);border-radius:16px;padding:0;max-width:560px;width:calc(100% - 2rem);max-height:85vh;overflow:auto;background:var(--card);color:var(--navy)}
+dialog::backdrop{background:#10223dcc}
+.dlg-x{position:sticky;float:right;top:.4rem;margin:.4rem .6rem -3rem 0;font-size:2rem;background:var(--navy);color:#fff;border:0;border-radius:50%;width:2.5rem;height:2.5rem;cursor:pointer;z-index:2}
+.dlg-body{padding:1.5rem}
+.dlg-body h3{font-size:1.6rem}
+.dlg-body li{margin-bottom:.35rem}
+
+@media(max-width:1000px){
+  .nav{flex-wrap:wrap}
+  nav{gap:.8rem;flex-wrap:wrap}
+  .services,.follow-up{grid-template-columns:1fr}
+  .steps-sec ol{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:650px){
+  html{scroll-padding-top:20px}
+  .nav{position:static}
+  .nav>.btn{width:100%}
+  .services,.catalog,.steps-sec,.help,.follow-up{padding:2.5rem 5vw}
+  .hero{height:340px}
+  .arrow{display:none}
+  .svc-grid,.stats{grid-template-columns:repeat(2,1fr)}
+  .stats b{font-size:2rem}
+  .steps-sec ol{grid-template-columns:1fr}
+  .row{flex-direction:column}
+  .stages{font-size:.7rem}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <span>Yojana Setu — Internship Demo Portal</span>
+  <div class="tools">
+    <button type="button" id="fontMinus" aria-label="Decrease text size">A−</button>
+    <button type="button" id="fontPlus" aria-label="Increase text size">A+</button>
+    <button type="button" id="contrastBtn" aria-pressed="false" data-t="contrast">High contrast</button>
+    <select id="langPick" aria-label="Language">
+      <option value="en">English</option>
+      <option value="ta">தமிழ்</option>
+      <option value="hi">हिन्दी</option>
+    </select>
+    <a href="#main" class="skip">Skip to content</a>
+  </div>
+</div>
+
+<header class="nav">
+  <a class="brand" href="#home" aria-label="Yojana Setu home">
+    <span class="wheel" aria-hidden="true"></span>
+    <b>Yojana Setu</b>
+    <small>A bridge to public services</small>
+  </a>
+  <nav aria-label="Main navigation">
+    <a href="#home" data-t="home">Home</a>
+    <a href="#services" data-t="services">Services</a>
+    <a href="#catalog" data-t="browse">Browse</a>
+    <a href="#steps-sec" data-t="how">How it works</a>
+    <a href="#follow-up" data-t="track">Track demo</a>
+    <a href="#help" data-t="help">Help</a>
+  </nav>
+  <a class="btn small" href="#eligForm" data-t="elig">Check eligibility</a>
+</header>
+
+<main id="main">
+  <section class="hero" id="home" aria-label="Highlights">
+    <h1 class="sr-only">Yojana Setu</h1>
+    <div id="slideBox"></div>
+    <button class="arrow prev" type="button" aria-label="Previous slide">‹</button>
+    <button class="arrow next" type="button" aria-label="Next slide">›</button>
+    <div class="dots" id="dotBox"></div>
+  </section>
+
+  <section class="stats" aria-label="Demo portal information">
+    <div><b data-n="12">0</b><span>Sample listings</span></div>
+    <div><b data-n="6">0</b><span>Categories</span></div>
+    <div><b data-n="28">0</b><span>Demo coverage count</span></div>
+    <div><b data-n="4">0</b><span>Application steps</span></div>
+  </section>
+
+  <section class="services" id="services">
+    <div>
+      <p class="eyebrow">SERVICES</p>
+      <h2 data-t="svc">Our services</h2>
+      <div class="svc-grid">
+        <a class="svc" href="#eligForm"><i aria-hidden="true">✔</i><b data-t="elig">Check eligibility</b></a>
+        <a class="svc" href="#catalog"><i aria-hidden="true">🔍</i><b data-t="browse">Browse</b></a>
+        <a class="svc" href="#follow-up"><i aria-hidden="true">📍</i><b data-t="track">Track demo</b></a>
+        <a class="svc" href="#help"><i aria-hidden="true">?</i><b data-t="help">Help</b></a>
+      </div>
+      <ul class="perks">
+        <li>No account needed for this demo</li>
+        <li>Simple eligibility guide</li>
+        <li>Free to explore</li>
+      </ul>
+    </div>
+
+    <form class="finder" id="eligForm">
+      <h2 data-t="elig">Eligibility finder</h2>
+      <p class="form-note">Answer these questions to see sample matches.</p>
+
+      <label for="ageIn">Your age <output id="ageShow" for="ageIn">30</output>
+        <input type="range" id="ageIn" min="1" max="90" value="30">
+      </label>
+
+      <label for="jobSel">Your occupation</label>
+      <select id="jobSel">
+        <option value="any">Select occupation</option>
+        <option value="farmer">Farmer</option>
+        <option value="student">Student</option>
+        <option value="entrepreneur">Small business owner</option>
+        <option value="worker">Worker / daily wage</option>
+        <option value="homemaker">Homemaker</option>
+        <option value="senior">Retired / senior</option>
+      </select>
+
+      <fieldset class="gender-field">
+        <legend>Gender</legend>
+        <div class="pills" id="genderBox">
+          <button type="button" data-v="any" class="on" aria-pressed="true">Any</button>
+          <button type="button" data-v="female" aria-pressed="false">Female</button>
+          <button type="button" data-v="male" aria-pressed="false">Male</button>
+        </div>
+      </fieldset>
+
+      <label for="incomeSel">Annual family income</label>
+      <select id="incomeSel">
+        <option value="unknown">Prefer not to say</option>
+        <option value="100000">Under ₹1 lakh</option>
+        <option value="300000">₹1–3 lakh</option>
+        <option value="800000">₹3–8 lakh</option>
+        <option value="2000000">Above ₹8 lakh</option>
+      </select>
+
+      <button class="btn" type="submit" data-t="go">Show sample matches</button>
+      <p class="count" id="matchInfo" aria-live="polite"></p>
+    </form>
+  </section>
+
+  <section class="catalog" id="catalog">
+    <div class="head">
+      <div>
+        <p class="eyebrow">EXPLORE</p>
+        <h2 data-t="brw">Browse schemes</h2>
+      </div>
+      <label class="search-label" for="searchBox">Search schemes
+        <input type="search" id="searchBox" placeholder="Search name or benefit">
+      </label>
+    </div>
+    <div class="chips" id="chipRow" aria-label="Filter schemes by category"></div>
+    <div class="cards" id="cardGrid" aria-live="polite"></div>
+    <p class="empty" id="noneMsg" hidden>No schemes found. Try another search or category.</p>
+  </section>
+
+  <section class="steps-sec" id="steps-sec">
+    <p class="eyebrow">GETTING STARTED</p>
+    <h2 data-t="stp">Four steps to explore a scheme</h2>
+    <ol>
+      <li><b>Check</b><span>Review the eligibility information.</span></li>
+      <li><b>Prepare</b><span>Check which documents are required.</span></li>
+      <li><b>Apply</b><span>Use the verified official application portal.</span></li>
+      <li><b>Track</b><span>Use the relevant official tracking service.</span></li>
+    </ol>
+  </section>
+
+  <section class="follow-up" id="follow-up">
+    <div>
+      <p class="eyebrow">DEMO FEATURE</p>
+      <h2 data-t="trk">Application status tracker</h2>
+      <p>Try: <code>YS-2026-1001</code> (just started) or <code>YS-2026-1042</code> (completed).</p>
+      <p class="form-note">This is simulated data. It does not check real government applications or payment status.</p>
+    </div>
+    <div>
+      <form id="trackForm" class="row">
+        <label class="sr-only" for="refNo">Demo reference number</label>
+        <input id="refNo" placeholder="Enter demo reference" autocomplete="off" maxlength="40" required>
+        <button class="btn" type="submit">Track demo</button>
+      </form>
+      <ol class="stages" id="stages" hidden>
+        <li>Submitted</li><li>Documents checked</li><li>Approved (demo)</li><li>Payment stage (demo)</li>
+      </ol>
+      <p id="trackNote" aria-live="polite" role="status"></p>
+    </div>
+  </section>
+
+  <section class="help" id="help">
+    <p class="eyebrow">HELP CENTRE</p>
+    <h2 data-t="hlp">Common questions</h2>
+    <details><summary>Is this an official government website?</summary>
+      <p>No. Yojana Setu is an internship demonstration project. Verify scheme information using the relevant official government website.</p></details>
+    <details><summary>Does a sample match mean I am eligible?</summary>
+      <p>No. The results use simplified sample rules. Actual eligibility depends on the current official guidelines and your circumstances.</p></details>
+    <details><summary>Do I need to enter personal information?</summary>
+      <p>No identity numbers, passwords or bank details are needed for this demo.</p></details>
+    <details><summary>Is application tracking connected to a backend?</summary>
+      <p>Not yet. The tracker currently uses fixed demonstration references. A real backend will be a separate development step.</p></details>
+  </section>
+</main>
+
+<footer>
+  <p><b>Yojana Setu</b> is a student demonstration project, not an official government website.</p>
+  <p>Always confirm scheme details and application status with the relevant official authority.</p>
+  <p>Banner photos: Wikimedia Commons contributors, licensed CC BY-SA.</p>
+</footer>
+
+<dialog id="infoDlg" aria-labelledby="modalTitle">
+  <button class="dlg-x" id="dlgClose" type="button" aria-label="Close details">×</button>
+  <div id="dlgBody"></div>
+</dialog>
+
+<script>
+"use strict";
+const $ = (q) => document.querySelector(q);
+const $$ = (q) => [...document.querySelectorAll(q)];
+const on = (q, ev, fn) => $(q).addEventListener(ev, fn);
+const noMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const state = { cat: "all", query: "", user: null, sex: "any", px: 16 };
+
+const CATS = { agri: "Agriculture", health: "Health", edu: "Education", biz: "Business", home: "Housing & Home", save: "Savings & Pension" };
+
+// banner photos come from wikimedia links. empty name = colour only
+const PHOTOS = "https://commons.wikimedia.org/wiki/Special:FilePath/";
+const SLIDES = [
+  ["A_farmer_in_Kerala_06.jpg", "#1b3a8a,#2798c2", "Find schemes that may be right for you"],
+  ["Woman_harvesting_wheat,_Raisen_district,_Madhya_Pradesh,_India_ggia_version.jpg", "#216b43,#84a832", "Support for farmers"],
+  ["Ploughing_paddy_field_with_oxen,_Umaria_district,_MP,_India.jpg", "#a7420a,#d6a321", "Help for rural families"],
+  ["Exams_in_Jaura,_India.jpg", "#572080,#9563ad", "Scholarships for students"]
+];
+
+// only the static text gets translated, scheme data stays english for now
+const TEXT = {
+  ta: { contrast: "அதிக மாறுபாடு", home: "முகப்பு", services: "சேவைகள்", browse: "திட்டங்கள்", how: "எப்படி செயல்படுகிறது", track: "நிலை அறிய", help: "உதவி", elig: "தகுதி சரிபார்ப்பு", explore: "ஆராயுங்கள்", s1: "உங்களுக்கு ஏற்ற திட்டங்களைக் கண்டறியுங்கள்", s2: "விவசாயிகளுக்கான ஆதரவு", s3: "கிராமப்புற குடும்பங்களுக்கு உதவி", s4: "மாணவர்களுக்கான உதவித்தொகை", svc: "எங்கள் சேவைகள்", go: "மாதிரி பொருத்தங்களைக் காட்டு", brw: "திட்டங்களைப் பாருங்கள்", stp: "தொடங்க நான்கு படிகள்", trk: "விண்ணப்ப நிலை கண்காணிப்பு", hlp: "பொதுவான கேள்விகள்" },
+  hi: { contrast: "उच्च कंट्रास्ट", home: "होम", services: "सेवाएँ", browse: "योजनाएँ", how: "यह कैसे काम करता है", track: "स्थिति देखें", help: "सहायता", elig: "पात्रता जाँच", explore: "देखें", s1: "अपने लिए सही योजनाएँ खोजें", s2: "किसानों के लिए सहायता", s3: "ग्रामीण परिवारों के लिए सहायता", s4: "छात्रों के लिए छात्रवृत्ति", svc: "हमारी सेवाएँ", go: "नमूना परिणाम दिखाएँ", brw: "योजनाएँ देखें", stp: "योजना जानने के चार चरण", trk: "आवेदन स्थिति ट्रैकर", hlp: "आम सवाल" }
+};
+
+// dummy data, not a real government database
+const SCHEMES = [
+  { name: "PM-KISAN", cat: "agri", icon: "₹", info: "Income support for eligible farmer families.", perk: "Around ₹6,000 per year (sample figure).", jobs: ["farmer"], from: 18, to: 90, cap: 800000, sex: "any", docs: ["Aadhaar", "Land records", "Bank passbook"] },
+  { name: "Ayushman Bharat PM-JAY", cat: "health", icon: "+", info: "Health coverage for eligible families.", perk: "Coverage and limits depend on current rules.", jobs: [], from: 1, to: 90, cap: 300000, sex: "any", docs: ["Identity proof", "Eligibility records", "Family details"] },
+  { name: "PM Awas Yojana", cat: "home", icon: "⌂", info: "Housing assistance for eligible applicants.", perk: "Support depends on the scheme component.", jobs: [], from: 18, to: 90, cap: 1800000, sex: "any", docs: ["Identity proof", "Income details", "Address proof"] },
+  { name: "Sukanya Samriddhi Yojana", cat: "save", icon: "S", info: "A savings scheme for a girl child's future.", perk: "Interest and tax rules are subject to current regulations.", jobs: [], from: 1, to: 10, cap: Infinity, sex: "female", docs: ["Birth certificate", "Parent or guardian ID"] },
+  { name: "PM Mudra Yojana", cat: "biz", icon: "M", info: "Loans for eligible small business activities.", perk: "Loan terms depend on the lender and category.", jobs: ["entrepreneur", "worker"], from: 18, to: 65, cap: Infinity, sex: "any", docs: ["Identity proof", "Business details", "Bank records"] },
+  { name: "Atal Pension Yojana", cat: "save", icon: "A", info: "Pension savings for eligible subscribers.", perk: "Pension options depend on applicable scheme rules.", jobs: ["worker", "homemaker", "entrepreneur"], from: 18, to: 40, cap: Infinity, sex: "any", docs: ["Identity proof", "Savings account", "Mobile number"] },
+  { name: "PM Ujjwala Yojana", cat: "home", icon: "U", info: "LPG connection assistance for eligible women.", perk: "Benefits depend on current eligibility and scheme rules.", jobs: [], from: 18, to: 90, cap: 100000, sex: "female", docs: ["Identity proof", "Household details", "Bank records"] },
+  { name: "National Scholarship", cat: "edu", icon: "E", info: "Explore scholarship opportunities for students.", perk: "Award amounts vary by scholarship.", jobs: ["student"], from: 14, to: 30, cap: 300000, sex: "any", docs: ["Marksheet", "Income certificate", "Bank details"] },
+  { name: "Skill India / PMKVY", cat: "edu", icon: "K", info: "Explore vocational training opportunities.", perk: "Training and certification depend on the programme.", jobs: ["student", "worker"], from: 15, to: 45, cap: Infinity, sex: "any", docs: ["Identity proof", "Education details", "Photograph"] },
+  { name: "Stand-Up India", cat: "biz", icon: "$", info: "Explore business finance options for eligible entrepreneurs.", perk: "Current loan eligibility and programme availability must be verified.", jobs: ["entrepreneur"], from: 18, to: 65, cap: Infinity, sex: "female", docs: ["Identity proof", "Project report", "Relevant eligibility records"] },
+  { name: "Kisan Credit Card", cat: "agri", icon: "K", info: "Credit facilities for eligible agricultural activities.", perk: "Credit terms depend on the lender and applicable rules.", jobs: ["farmer"], from: 18, to: 75, cap: Infinity, sex: "any", docs: ["Identity proof", "Relevant land or activity records"] },
+  { name: "Senior Citizen Savings Scheme", cat: "save", icon: "%", info: "A savings option for eligible senior citizens.", perk: "Deposit limits and interest rates may change.", jobs: ["senior"], from: 60, to: 90, cap: Infinity, sex: "any", docs: ["Age proof", "Identity proof", "Photograph"] }
+];
+
+// null = no profile yet, true/false = fits or not
+const fits = (s) => {
+  const u = state.user;
+  if (!u) return null;
+  const ageOk = u.age >= s.from && u.age <= s.to;
+  const sexOk = [s.sex, u.gender].includes("any") || u.gender === s.sex;
+  const jobOk = !s.jobs.length || s.jobs.includes(u.job);
+  const incomeOk = u.income === null || u.income <= s.cap; // skipped income != zero
+  return ageOk && sexOk && jobOk && incomeOk;
+};
+
+const renderChips = () => {
+  const all = [["all", "All categories"], ...Object.entries(CATS)];
+  $("#chipRow").innerHTML = all.map(([key, label]) =>
+    `<button type="button" class="chip${state.cat === key ? " on" : ""}" data-category="${key}" aria-pressed="${state.cat === key}">${label}</button>`).join("");
+};
+
+const renderCards = () => {
+  const q = state.query.trim().toLowerCase();
+  const list = SCHEMES.filter((s) =>
+    (state.cat === "all" || s.cat === state.cat) &&
+    [s.name, s.info, s.perk, CATS[s.cat]].join(" ").toLowerCase().includes(q));
+  state.user && list.sort((a, b) => Number(fits(b)) - Number(fits(a)));
+  $("#noneMsg").hidden = list.length > 0;
+  $("#cardGrid").innerHTML = list.map((s) => {
+    const ok = fits(s);
+    return `<button type="button" class="card${ok === false ? " faded" : ""}" data-scheme="${s.name}">
+      <div class="cover ${s.cat}" data-icon="${s.icon}"><span>${CATS[s.cat]}</span>${ok ? '<span class="match">Possible match</span>' : ""}</div>
+      <div class="card-body"><h3>${s.name}</h3><p>${s.info}</p><p class="perk">${s.perk}</p></div></button>`;
+  }).join("");
+};
+
+const openInfo = (s) => {
+  if (!s) return;
+  $("#dlgBody").innerHTML = `<div class="dlg-body">
+    <h3 id="modalTitle">${s.name}</h3><p>${s.info}</p>
+    <p><strong>Category:</strong> ${CATS[s.cat]}</p>
+    <p><strong>Illustrative benefit:</strong> ${s.perk}</p>
+    <p><strong>Age range:</strong> ${s.from}–${s.to} years</p>
+    <h4>Documents to check</h4><ul>${s.docs.map((d) => `<li>${d}</li>`).join("")}</ul>
+    <p class="form-note">This is sample information, not an eligibility decision. Check the current official scheme rules before applying.</p>
+    <form method="dialog"><button class="btn">Close</button></form></div>`;
+  $("#infoDlg").open || $("#infoDlg").showModal();
+};
+
+const runFinder = () => {
+  const job = $("#jobSel").value;
+  const note = $("#matchInfo");
+  if (job === "any") {
+    note.textContent = "Please select an occupation to see sample matches.";
+    return $("#jobSel").focus();
+  }
+  const income = $("#incomeSel").value;
+  state.user = { age: +$("#ageIn").value, job, gender: state.sex, income: income === "unknown" ? null : +income };
+  state.cat = "all";
+  const n = SCHEMES.filter((s) => fits(s)).length;
+  note.textContent = n ? `${n} possible sample match(es). Check official rules.` : "No sample matches found. Try adjusting your answers.";
+  renderChips();
+  renderCards();
+  $("#catalog").scrollIntoView({ behavior: noMotion ? "auto" : "smooth" });
+};
+
+const applyLang = (code) => {
+  document.documentElement.lang = code;
+  $$("[data-t]").forEach((el) => {
+    el.dataset.en ??= el.textContent; // remember english first
+    el.textContent = TEXT[code]?.[el.dataset.t] ?? el.dataset.en;
+  });
+  localStorage.setItem("lang", code);
+};
+
+let pos = 0, clock;
+
+const showSlide = (n) => {
+  pos = (n + SLIDES.length) % SLIDES.length;
+  $$(".slide").forEach((el, i) => el.classList.toggle("on", i === pos));
+  $$("#dotBox button").forEach((el, i) => el.classList.toggle("on", i === pos));
+};
+
+const startAuto = () => {
+  clearInterval(clock);
+  noMotion || (clock = setInterval(() => showSlide(pos + 1), 4500));
+};
+
+const moveTo = (step, to) => {
+  showSlide(to ?? pos + step);
+  startAuto();
+};
+
+const buildSlider = () => {
+  $("#slideBox").innerHTML = SLIDES.map(([file, grad, text], i) => {
+    const photo = file ? `url('${PHOTOS}${file}?width=1600') center/cover,` : "";
+    return `<div class="slide" style="background:${photo}linear-gradient(135deg,${grad})">
+      <div class="cap"><h2 data-t="s${i + 1}">${text}</h2>
+      <a class="btn" href="#services" data-t="explore">Explore</a></div></div>`;
+  }).join("");
+  $("#dotBox").innerHTML = SLIDES.map((_, i) =>
+    `<button type="button" aria-label="Slide ${i + 1}" data-i="${i}"></button>`).join("");
+  showSlide(0);
+  on(".prev", "click", () => moveTo(-1));
+  on(".next", "click", () => moveTo(1));
+  on("#dotBox", "click", (e) => e.target.dataset.i && moveTo(0, +e.target.dataset.i));
+  on(".hero", "mouseenter", () => clearInterval(clock));
+  on(".hero", "mouseleave", startAuto);
+  startAuto();
+};
+
+// fake refs, number = steps finished
+const DEMO = { "YS-2026-1001": 1, "YS-2026-1042": 4 };
+
+const statusText = (ref, n) => {
+  if (!ref) return "Enter the demonstration reference number.";
+  if (n === 4) return "Demo status: all steps completed. This is not a real confirmation.";
+  if (n) return `Demo status: step ${n} of 4 done. Still in progress (demo only).`;
+  return "Demo reference not found. Check the number and try again.";
+};
+
+const trackStatus = (e) => {
+  e.preventDefault();
+  const ref = $("#refNo").value.trim().toUpperCase();
+  const n = DEMO[ref] ?? 0;
+  $("#stages").hidden = !n;
+  [...$("#stages").children].forEach((li, i) => li.classList.toggle("done", i < n));
+  $("#trackNote").textContent = statusText(ref, n);
+};
+
+const resize = (d) => {
+  state.px = Math.min(22, Math.max(13, state.px + d));
+  document.documentElement.style.setProperty("--size", state.px + "px");
+};
+
+const countUp = () => $$("[data-n]").forEach((el) => {
+  const goal = +el.dataset.n, t0 = performance.now();
+  if (noMotion) return void (el.textContent = goal);
+  const tick = (t) => {
+    const p = Math.min((t - t0) / 900, 1);
+    el.textContent = Math.floor(goal * p);
+    p < 1 && requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+});
+
+const wire = () => {
+  on("#eligForm", "submit", (e) => { e.preventDefault(); runFinder(); });
+  on("#ageIn", "input", (e) => ($("#ageShow").textContent = e.target.value));
+  on("#genderBox", "click", (e) => {
+    const b = e.target.closest("button[data-v]");
+    if (!b) return;
+    state.sex = b.dataset.v;
+    [...e.currentTarget.children].forEach((o) => {
+      o.classList.toggle("on", o === b);
+      o.setAttribute("aria-pressed", o === b);
+    });
+  });
+  on("#chipRow", "click", (e) => {
+    const b = e.target.closest("button[data-category]");
+    if (!b) return;
+    state.cat = b.dataset.category;
+    renderChips();
+    renderCards();
+  });
+  on("#searchBox", "input", (e) => { state.query = e.target.value; renderCards(); });
+  on("#cardGrid", "click", (e) => {
+    const c = e.target.closest("button[data-scheme]");
+    c && openInfo(SCHEMES.find((s) => s.name === c.dataset.scheme));
+  });
+  on("#dlgClose", "click", () => $("#infoDlg").close());
+  on("#infoDlg", "click", (e) => e.target === $("#infoDlg") && $("#infoDlg").close());
+  on("#trackForm", "submit", trackStatus);
+  on("#fontPlus", "click", () => resize(1));
+  on("#fontMinus", "click", () => resize(-1));
+  on("#contrastBtn", "click", () => $("#contrastBtn").setAttribute("aria-pressed", document.body.classList.toggle("hc")));
+  on("#langPick", "change", (e) => applyLang(e.target.value));
+};
+
+// start everything
+buildSlider();
+wire();
+renderChips();
+renderCards();
+countUp();
+const savedLang = localStorage.getItem("lang") || "en";
+$("#langPick").value = savedLang;
+applyLang(savedLang);
+</script>
+</body>
+</html>
